@@ -28,7 +28,7 @@ def get_week_file():
 starting_date = datetime.datetime(2026, 9, 7)
 
 DISBOARD_BOT_ID = 302050872383242240
-SERVER_ID = 1547099091304185937
+SERVER_ID = 924425431048917033
 
 #The columns at which these things appear in the database.
 ID_COL = 0
