@@ -94,8 +94,8 @@ async def receive_commands(message):
             
             await message.channel.send(output)
             pass
-        case "?help":
-            msg = "#COMMANDS:\n\n?help --- displays info about each command\n\n?totals <staff_id> --- displays the total stats for all staff members (unless staff_id is provided, at which point only data for that staff is provided)\n\n?week X <staff_id> --- displays the week_x stats for all staff members (unless staff_id is provided, at which point only data for that staff is provided)\n\n?currentweek --- displays the current week\n\n?addnote <note> --- adds a note for the current week\n\n?viewnote <week_num> <staff_id> --- view all notes for that week, optionally from a staff member"
+        case "?helpme":
+            msg = "#COMMANDS:\n\n?helpme --- displays info about each command\n\n?totals <staff_id> --- displays the total stats for all staff members (unless staff_id is provided, at which point only data for that staff is provided)\n\n?week X <staff_id> --- displays the week_x stats for all staff members (unless staff_id is provided, at which point only data for that staff is provided)\n\n?currentweek --- displays the current week\n\n?addnote <note> --- adds a note for the current week\n\n?viewnote <week_num> <staff_id> --- view all notes for that week, optionally from a staff member"
             await message.channel.send(msg)
             pass
         case "?currentweek":
