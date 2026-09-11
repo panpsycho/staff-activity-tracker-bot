@@ -1,2 +1,6 @@
 node_modules
 .env
+staff.csv
+totals.csv
+voice.csv
+week_*.csv
