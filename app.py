@@ -66,6 +66,8 @@ async def receive_commands(message):
 
     match command:
         case "?addnote":
+            if not is_staff(message.author):
+                return
             msg = " ".join(msg[1:])
 
             with open(notes_file, mode="a", encoding="utf-8", newline="") as file:
@@ -118,7 +120,8 @@ async def receive_commands(message):
                 await send_csv_message(data, message.channel)
                 pass
             else:
-                print("ERROR: Invalid number of arguments for command 'totals'")
+                pass
+                #print("ERROR: Invalid number of arguments for command 'totals'")
             pass
         case "?week":
             if length == 2:
@@ -141,7 +144,8 @@ async def receive_commands(message):
                 await send_csv_message(data, message.channel) 
                 pass
             else:
-                print("ERROR: Invalid number of arguments for command 'week'")
+                pass
+                #print("ERROR: Invalid number of arguments for command 'week'")
             pass
         case _:
             #Not a command. Pass.
@@ -149,7 +153,7 @@ async def receive_commands(message):
 
 def get_week_data(week_num):
     if int(week_num) > get_week_num():
-        print("ERROR: Cannot give week data for a future week.")
+        #print("ERROR: Cannot give week data for a future week.")
         return
 
     check_for_week_file(week_num)
@@ -189,7 +193,7 @@ async def on_ready():
     guild = client.get_guild(SERVER_ID)
 
 
-    print(guild)
+    #print(guild)
 
     #Prepare staff.csv and set up other files
     global staff_role
@@ -199,7 +203,7 @@ async def on_ready():
             staff_role = role
 
     if not staff_role:
-        print("ERROR: Could not find a 'Staff' role")
+        #print("ERROR: Could not find a 'Staff' role")
         return
 
 
@@ -210,7 +214,7 @@ async def on_ready():
         csv_reader = csv.reader(file)
         data = list(csv_reader)
 
-    print(len(data))
+    #print(len(data))
 
     missing_members = []
     staff_file_ids = [int(data[i][0]) for i in range(len(data))]
@@ -280,13 +284,12 @@ async def on_message(message):
             if command_name == "bump":
                 increment_bump_count(user)
 
-    
+    await receive_commands(message)
+
     if not is_staff(message.author):
         return
 
-    print("staff sent message")
-
-    await receive_commands(message)
+    #print("staff sent message")
 
     if message.content == "?va" or message.content == "?vm":
         increment_verification_count(message.author)
@@ -323,7 +326,8 @@ async def on_voice_state_update(member, before, after):
         current_row += 1
 
     if row_to_change == -1:
-        print(f"ERROR: Cannot find staff's voice data in {voice_file}")
+        #print(f"ERROR: Cannot find staff's voice data in {voice_file}")
+        pass
 
     updated_row = [-1, -1]
 
@@ -353,7 +357,7 @@ async def on_voice_state_update(member, before, after):
 
 @client.event
 async def on_audit_log_entry_create(entry):
-    print(entry.action) #Make sure that entry.action is actually a string
+    #print(entry.action) #Make sure that entry.action is actually a string
     match entry.action:
         case discord.AuditLogAction.kick:
             increment_kick_count(entry.user)
@@ -364,7 +368,7 @@ async def on_audit_log_entry_create(entry):
         case discord.AuditLogAction.member_update:
             if not entry.before.timed_out_until and entry.after.timed_out_until: #Double check value when not timed out
                 if not entry.user:
-                    print("Timeout applied without a member who did so (system/automod?)")
+                    #print("Timeout applied without a member who did so (system/automod?)")
                     return
                 increment_timeout_count(entry.user)
             pass
@@ -372,10 +376,10 @@ async def on_audit_log_entry_create(entry):
             if staff_role not in entry.before.roles and staff_role in entry.after.roles:
                 #Person gained a staff role, update totals and current week CSV.
 
-                print(1)
+                #print(1)
 
                 def add_member_to_file(filename, row_to_add):
-                    print(row_to_add)
+                    #print(row_to_add)
                     with open(filename, mode="r", encoding="utf-8", newline="") as file:
                         csv_reader = csv.reader(file)
                         data = list(csv_reader)
@@ -417,7 +421,7 @@ def increment_column(member, column_index, optional_amount=None, optional_replac
         current_index += 1
 
     if row_index == -1:
-        print(f"ERROR: Unable to find member's ID in {totals_file}")
+        #print(f"ERROR: Unable to find member's ID in {totals_file}")
         return
 
     # if not optional_replace:
@@ -450,7 +454,7 @@ def increment_column(member, column_index, optional_amount=None, optional_replac
         current_index += 1
 
     if row_index == -1:
-        print(f"ERROR: Unable to find member's ID in {week_file}")
+        #print(f"ERROR: Unable to find member's ID in {week_file}")
         return
 
     increment_amount = 1 if not optional_amount else optional_amount
@@ -461,38 +465,38 @@ def increment_column(member, column_index, optional_amount=None, optional_replac
             csv_writer.writerows(data)
 
 def increment_message_count(member):
-    print(f"incrementing message for {member.name}")
+    #print(f"incrementing message for {member.name}")
     increment_column(member, MESSAGES_COL)
 
 
 def increment_voice_duration(member, duration):
     duration = int(duration)
-    print(f"incrementing vc duration for {member.name} with duration {duration}")
+    #print(f"incrementing vc duration for {member.name} with duration {duration}")
     increment_column(member, VC_TIME_COL, duration)
 
 
 def increment_kick_count(member):
-    print(f"incrementing kick count for {member.name}")
+    #print(f"incrementing kick count for {member.name}")
     increment_column(member, KICKS_COL)
 
 
 def increment_ban_count(member):
-    print(f"incrementing ban count for {member.name}")
+    #print(f"incrementing ban count for {member.name}")
     increment_column(member, BANS_COL)
 
 
 def increment_timeout_count(member):
-    print(f"incrementing timeout count for {member.name}")
+    #print(f"incrementing timeout count for {member.name}")
     increment_column(member, TIMEOUTS_COL)
 
 
 def increment_bump_count(member):
-    print(f"incrementing bump count for {member.name}")
+    #print(f"incrementing bump count for {member.name}")
     increment_column(member, BUMPS_COL)
 
 
 def increment_verification_count(member):
-    print(f"incrementing verification counts for {member.name}")
+    #print(f"incrementing verification counts for {member.name}")
     increment_column(member, VERIFICATIONS_COMPLETED_COL)
 
 
