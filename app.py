@@ -22,8 +22,10 @@ staff_file = "staff.csv"
 totals_file = "totals.csv"
 notes_file = "notes.csv"
 
-def get_week_file():
-    return f"week_{get_week_num()}.csv"
+def get_week_file(week_num=None):
+    if week_num is None:
+        week_num = get_week_num()
+    return f"week_{week_num}.csv"
 
 starting_date = datetime.datetime(2026, 9, 7)
 
@@ -150,9 +152,9 @@ def get_week_data(week_num):
         print("ERROR: Cannot give week data for a future week.")
         return
 
-    check_for_week_file()
+    check_for_week_file(week_num)
     
-    with open(get_week_file(), mode="r", encoding="utf-8", newline="") as file:
+    with open(get_week_file(week_num), mode="r", encoding="utf-8", newline="") as file:
         csv_reader = csv.reader(file)
         data = list(csv_reader)
 
@@ -448,7 +450,7 @@ def increment_column(member, column_index, optional_amount=None, optional_replac
         current_index += 1
 
     if row_index == -1:
-        print(f"ERROR: Unable to find member's ID in {totals_file}")
+        print(f"ERROR: Unable to find member's ID in {week_file}")
         return
 
     increment_amount = 1 if not optional_amount else optional_amount
@@ -498,9 +500,9 @@ def register_note(member, note):
     #TODO
     pass
 
-def check_for_week_file():
-    week_file_name = get_week_file()
-    if os.path.isfile(week_file_name): #Does this work?
+def check_for_week_file(week_num=None):
+    week_file_name = get_week_file(week_num)
+    if os.path.isfile(week_file_name) and os.path.getsize(week_file_name) > 0: #Does this work?
         return
 
     #File does not exist, create it.
